@@ -1,0 +1,1 @@
+<html><body>You are being <a href="https://raw.github.com/mjpieters/setuptools_subversion/master/LICENSE.txt">redirected</a>.</body></html>
