@@ -1,4 +1,4 @@
-1.1 (unreleased)
+1.1 (2016-06-06)
 ----------------
 
 * Support surrogate pairs by using math text-run groups.
