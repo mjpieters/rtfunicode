@@ -1,4 +1,4 @@
-1.3 (unreleased)
+1.3 (2016-06-06)
 ----------------
 
 * Removed limitations section from README as these were removed in 1.1.
