@@ -1,6 +1,8 @@
 1.2 (unreleased)
 ----------------
 
+* Correct LICENSE.txt file.
+
 1.1 (2016-06-06)
 ----------------
 
