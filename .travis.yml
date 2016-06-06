@@ -8,5 +8,5 @@ python:
   - "3.5-dev" # 3.5 development branch
   - "nightly" # currently points to 3.6-dev
 install: travis_retry python setup.py -q install
-script: python setup.py tests
+script: python setup.py test
 
