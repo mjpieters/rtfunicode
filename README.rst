@@ -38,6 +38,9 @@ Requirements
 Development
 -----------
 
+.. image:: https://travis-ci.org/mjpieters/rtfunicode.svg?branch=master
+    :target: https://travis-ci.org/mjpieters/rtfunicode
+
 The project code is hosted on GitHub_, feel free to report issues,
 fork the code and issue pull requests.
 
