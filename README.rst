@@ -32,7 +32,7 @@ should be handled.
 Requirements
 ------------
 
-* Python 2.4 or newer (including python 3.x)
+* Python 2.4-2.7, 3.3-3.5
 
 
 Development

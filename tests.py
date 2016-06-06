@@ -34,22 +34,11 @@ class RTFUnicodeTests(unittest.TestCase):
         self._compare('\u0123\u8123', '\\u291?\\u-32477?')
 
     def testBeyondBMP(self):
-        # There is documentation on how RTF should handle these
-        # As such, this is unsupported by the library, but there
-        # are some side-effects from using a UCS-2 build we can "test"
+        # RTF 1.9.1 (Word 2007), page 115 states that surrogate pairs are
+        # supported in math text-run groups; experimentation with Word shows
+        # they can exist outside of these too.
         testChar = '\U00010196'
-        if len(u(testChar)) == 1:  # UCS-4 build
-            self.assertRaises(
-                UnicodeEncodeError,
-                self._compare, testChar, 'ignored')
-        elif ord(u(testChar)[0]) == 0xd800:  # Big-endian UTF-16
-            # No idea if RTF will read this correctly at all
-            # Windows is LE, so this is probably not going to fly.
-            self._compare(testChar, '\\u-10240?\\u-8810?')
-        else:
-            # No idea if RTF will read this correctly at all
-            # There is on documentation on how to encode a surrogate pair
-            self._compare(testChar, '\\u-8810?\\u-10240?')
+        self._compare(testChar, '\\u-10240?\\u-8810?')
 
 
 def test_suite():
