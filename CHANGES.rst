@@ -1,4 +1,4 @@
-1.4 (unreleased)
+1.4 (2016-06-13)
 ----------------
 
 * Add a MANIFEST.in template to make sure CHANGES.rst is included in the
