@@ -1,6 +1,9 @@
 1.4 (unreleased)
 ----------------
 
+* Add a MANIFEST.in template to make sure CHANGES.rst is included in the
+  distribution.
+
 1.3 (2016-06-06)
 ----------------
 
