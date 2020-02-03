@@ -8,7 +8,7 @@ Importing this module adds a new `rtfunicode` codec, allowing you to encode
 unicode strings to valid RTF bytecode sequences:
 
 >>> import rtfunicode
->>> u'RTF and unicode mix just fine! \u263A'.encode('rtfunicode')
+>>> 'RTF and unicode mix just fine! \u263A'.encode('rtfunicode')
 'RTF and unicode mix just fine! \\u9786?'
 
 The RTF command code for a unicode character is `\uN?`, where N is a signed
