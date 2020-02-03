@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '1.5'
+version = '2.0'
 
 setup(
     name='rtfunicode',
