@@ -18,7 +18,7 @@ module sets the latter to the '?' literal for simlicity's sake.
 Requirements
 ------------
 
-* Python 2.4-2.7, 3.3-3.5
+* Python 3.3-3.8
 
 
 Development

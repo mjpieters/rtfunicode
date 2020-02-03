@@ -4,28 +4,16 @@
 
 import codecs
 import re
-import sys
 
 from struct import unpack
 
 
-if sys.version_info[0] < 3 and sys.maxunicode == (2 ** 16 - 1):
-    # Python 2 UCS 2 build
-    # Encode everything < 0x20, the \, { and } chars and everything > 0x7f
-    # codepoints over sys.maxunicode are already encoded to surrogates so match
-    # those explicitly.
-    _charescape = re.compile(
-        u'([\x00-\x1f\\\\{}\x80-\ud7ff\ue000-\uffff])|'
-        u'([\ud800-\udbff][\udc00-\udfff])')
-
-else:
-    # Python 3
-    # Encode everything < 0x20, the \, { and } chars and everything > 0x7f.
-    # Codeponts over \uffff are handled separately so capture these in a second
-    # group. Valid surrogate pairs are supported too.
-    _charescape = re.compile(
-        u'([\x00-\x1f\\\\{}\x80-\ud7ff\ue000-\uffff])|'
-        u'([\U00010000-\U0001ffff]|[\ud800-\udbff][\udc00-\udfff])')
+# Encode everything < 0x20, the \, { and } chars and everything > 0x7f.
+# Codeponts over \uffff are handled separately so capture these in a second
+# group. Valid surrogate pairs are supported too.
+_charescape = re.compile(
+    '([\x00-\x1f\\\\{}\x80-\ud7ff\ue000-\uffff])|'
+    '([\U00010000-\U0001ffff]|[\ud800-\udbff][\udc00-\udfff])')
 
 
 def _replace(match):
@@ -39,9 +27,9 @@ def _replace(match):
         # surrogates must be wrapped in a {/mr...} math text-run group.
         # Experimentation with various RTF apps (Word, Apple TextEdit,
         # LibreOffice) shows surrogates work in regular paragraphs too.
-        return u'\\u%d?\\u%d?' % (cp1, cp2)
+        return '\\u{}?\\u{}?'.format(cp1, cp2)
     cp = ord(char)
-    return u'\\u%d?' % (cp > 32767 and cp - 65536 or cp,)
+    return '\\u{}?'.format(cp > 32767 and cp - 65536 or cp)
 
 
 def _rtfunicode_encode(text, errors):
@@ -53,13 +41,10 @@ class Codec(codecs.Codec):
     def encode(self, input, errors='strict'):
         return _rtfunicode_encode(input, errors), len(input)
 
-try:
-    class IncrementalEncoder(codecs.IncrementalEncoder):
-        def encode(self, input, final=False):
-            return _rtfunicode_encode(input, self.errors)
-except AttributeError:
-    # Python 2.4, ignore
-    pass
+
+class IncrementalEncoder(codecs.IncrementalEncoder):
+    def encode(self, input, final=False):
+        return _rtfunicode_encode(input, self.errors)
 
 
 class StreamWriter(Codec, codecs.StreamWriter):
@@ -68,16 +53,13 @@ class StreamWriter(Codec, codecs.StreamWriter):
 
 def rtfunicode(name):
     if name == 'rtfunicode':
-        try:
-            return codecs.CodecInfo(
-                name='rtfunicode',
-                encode=Codec().encode,
-                decode=Codec().decode,  # raises NotImplementedError
-                incrementalencoder=IncrementalEncoder,
-                streamwriter=StreamWriter,
-            )
-        except AttributeError:
-            # Python 2.4
-            return (Codec().encode, Codec().decode, StreamWriter, None)
+        return codecs.CodecInfo(
+            name='rtfunicode',
+            encode=Codec().encode,
+            decode=Codec().decode,
+            incrementalencoder=IncrementalEncoder,
+            streamwriter=StreamWriter,
+        )
+
 
 codecs.register(rtfunicode)
