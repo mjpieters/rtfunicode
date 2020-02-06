@@ -1,15 +1,5 @@
 import string
-import sys
 import unittest
-
-
-# Python 2 and 3 compat.
-if sys.version_info[0] < 3:
-    u = lambda t: unicode(t.decode('unicode_escape'))
-    b = str
-else:
-    u = lambda t: t
-    b = lambda t: bytes(t, 'ascii')
 
 
 class RTFUnicodeTests(unittest.TestCase):
@@ -18,27 +8,27 @@ class RTFUnicodeTests(unittest.TestCase):
         rtfunicode         # pyflakes needn't worry
 
     def _compare(self, in_, out):
-        self.assertEqual(u(in_).encode('rtfunicode'), b(out))
+        self.assertEqual(in_.encode('rtfunicode'), out)
 
     def testPlainASCII(self):
         ascii = string.ascii_letters + string.digits
-        self._compare(ascii, ascii)
+        self._compare(ascii, ascii.encode())
 
     def testRTFControlCodes(self):
-        self._compare('\\{}', '\\u92?\\u123?\\u125?')
+        self._compare('\\{}', b'\\u92?\\u123?\\u125?')
 
     def testLatin1(self):
-        self._compare('\xe0\xeb', '\\u224?\\u235?')
+        self._compare('\xe0\xeb', b'\\u224?\\u235?')
 
     def testBMP(self):
-        self._compare('\u0123\u8123', '\\u291?\\u-32477?')
+        self._compare('\u0123\u8123', b'\\u291?\\u-32477?')
 
     def testBeyondBMP(self):
         # RTF 1.9.1 (Word 2007), page 115 states that surrogate pairs are
         # supported in math text-run groups; experimentation with Word shows
         # they can exist outside of these too.
         testChar = '\U00010196'
-        self._compare(testChar, '\\u-10240?\\u-8810?')
+        self._compare(testChar, b'\\u-10240?\\u-8810?')
 
 
 def test_suite():
