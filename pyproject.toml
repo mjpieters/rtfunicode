@@ -34,17 +34,14 @@ Issues = "https://github.com/mjpieters/rtfunicode/issues"
 Changelog = "https://github.com/mjpieters/rtfunicode/blob/main/CHANGELOG.md"
 
 [tool.coverage.run]
-include = ["rtfunicode.py"]
+source_pkgs = ["rtfunicode"]
 branch = true
 
 [tool.coverage.report]
 show_missing = true
 
-[tool.hatch.build]
-include = ["rtfunicode.py"]
-
 [tool.pyright]
-strict = ["rtfunicode.py"]
+strict = ["src"]
 venvPath = "."
 venv = ".venv"
 
@@ -58,12 +55,11 @@ extend-select = [
     "UP"
 ]
 
-[tool.hatch.build.targets.sdist]
-include = [
+[tool.uv.build-backend]
+source-include = [
     "CHANGELOG.md",
-    "*.py",
 ]
 
 [build-system]
-requires = ["hatchling~=1.27"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"

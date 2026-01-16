@@ -34,7 +34,8 @@ tasks:
   dev:lint:code:
     sources:
       - pyproject.toml
-      - '*.py'
+      - src/**/*.py
+      - tests.py
     cmds:
       - uv run ruff format --check
       - uv run ruff check
@@ -61,7 +62,8 @@ tasks:
     desc: Formats main project
     sources:
       - pyproject.toml
-      - '*.py'
+      - src/**/*.py'
+      - tests.py
     cmds:
       - uv run ruff format
 
