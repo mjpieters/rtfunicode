@@ -1,0 +1,231 @@
+name: Python checks
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [v*]
+  pull_request:
+  merge_group:
+
+env:
+  FORCE_COLOR: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    name: "Python linting"
+    permissions:
+      contents: read
+    env:
+      UV_FROZEN: true
+
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # v7.2.0
+      with:
+        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
+          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 🐍
+      uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Check lock is up-to-date
+      run: |
+        uv lock --check
+
+    - name: Install dependencies
+      run: |
+        uv sync
+        echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+    - name: Check file formatting
+      uses: astral-sh/ruff-action@57714a7c8a2e59f32539362ba31877a1957dded1 # v3.5.1
+      with:
+        args: "format --check"
+
+    - name: Lint with ruff
+      env:
+        RUFF_OUTPUT_FORMAT: github
+      run: |
+        ruff check
+
+    - name: Typecheck with pyright
+      uses: jakebailey/pyright-action@6cabc0f01c4994be48fd45cd9dbacdd6e1ee6e5e # v2.3.3
+      with:
+        version: PATH
+
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+    name: Python tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write  # needed for the codecov actions to obtain a OIDC token
+    env:
+      UV_FROZEN: true
+
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b  # v7.2.0
+      with:
+        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
+          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+        cache-dependency-glob: "uv.lock"
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up Python ${{ matrix.python-version }} 🐍
+      uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      env:
+        UV_FROZEN: true
+      run: |
+        uv sync
+
+    - name: Test with pytest
+      env:
+        UV_FROZEN: true
+      run: |
+        uv run pytest -v --junitxml=junit.xml -o junit_family=legacy
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+      with:
+        use_oidc: true
+
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+      with:
+        report_type: test_results
+        use_oidc: true
+
+  test-summary:
+    name: Test matrix status
+    runs-on: ubuntu-latest
+    needs:
+      - linting
+      - tests
+    if: always()
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+      with:
+        jobs: ${{ toJSON(needs) }}
+
+
+  build:
+    name: Build distribution 📦
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      UV_FROZEN: true
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - test-summary
+
+    outputs:
+      version: ${{ steps.note.outputs.version }}
+      prerelease: ${{ steps.note.outputs.prerelease }}
+
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        persist-credentials: false
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # v7.2.0
+      with:
+        enable-cache: | # zizmor: ignore[cache-poisoning] cache is disabled when publishing to prevent poisoning
+          ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 🐍
+      uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Install dependencies
+      run: |
+        uv sync
+
+    - name: Build the Python 🐍 binary wheel and source tarball 📦
+      run: |
+        uv build
+        rm -f dist/.gitignore  # get-releasenotes can't handle non-dist files here
+
+    - name: Check build
+      run: uvx twine check --strict dist/*
+
+    - name: Prepare Release Note
+      id: note
+      uses: aio-libs/get-releasenote@b0fcc7f3e5f5cc7c8b01e2f75516b1732f6bd8b2 # v1.4.5
+      with:
+        changes_file: CHANGELOG.md
+        output_file: release_notes.md
+        start_line: '# Changelog for rtfunicode'
+        head_line: '## {version} \({date}\)'
+        dist_dir: dist
+
+    - name: Store the Python 🐍 distribution 📦
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: python-package-distributions
+        path: |
+          dist/
+          release_notes.md
+
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - build
+    environment:
+      name: pypi
+      url: https://pypi.org/p/rtfunicode
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      contents: write  # required for creating GH releases
+
+    steps:
+    - name: Download Python 🐍 distribution 📦
+      uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      with:
+        name: python-package-distributions
+
+    - name: Publish Python 🐍 distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+
+    - name: GitHub release
+      uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+      with:
+        name: rtfunicode ${{ needs.build.outputs.version }}
+        bodyFile: release_notes.md
+        artifacts: dist/*
+        prerelease: ${{ needs.build.outputs.prerelease }}

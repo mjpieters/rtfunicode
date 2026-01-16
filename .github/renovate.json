@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "addLabels": [
+    "dependencies",
+    "bot"
+  ],
+  "extends": [
+    "config:best-practices"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "These packages are not abandoned just yet",
+      "matchPackageNames": [
+        "aio-libs/get-releasenote",
+        "re-actors/alls-green"
+      ],
+      "abandonmentThreshold": "5 years"
+    }
+  ],
+  "platformAutomerge": true
+}
