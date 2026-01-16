@@ -18,7 +18,7 @@ module sets the latter to the '?' literal for simplicity's sake.
 
 ## Requirements
 
-* Python 3.3 or newer.
+* Python 3.10 or newer.
 
 
 ## Development
@@ -28,6 +28,15 @@ fork the code and issue pull requests.
 
 [GitHub]: https://github.com/mjpieters/rtfunicode
 
+This project uses [`uv`](https://docs.astral.sh/uv/) to handle Python dependencies and environments; use `uv sync` to get an up-to-date virtualenv with all dependencies. This includes development dependencies such as [Ruff](https://docs.astral.sh/ruff/) (used for linting and formatting) and [Pyright](https://microsoft.github.io/pyright/) (used to validate type annotations).
+
+### Linting and formatting
+
+While PRs and commits on GitHub are checked for linting and formatting issues, it's easier to check for issues locally first. After running `uv sync`, run `uv run pre-commit install` to install [pre-commit](https://pre-commit.com/) hooks that will run these tools and format your changes automatically on commits. These hooks also run `uv sync` whenever your working tree changes.
+
+### Testing
+
+This project uses `pytest` to run its tests: `uv run pytest`.
 
 ## License
 

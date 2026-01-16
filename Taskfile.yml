@@ -1,0 +1,100 @@
+version: '3'
+
+output: prefixed
+
+vars:
+  PROJECT_NAME: rtfunicode
+
+tasks:
+  dev:install-precommit:
+    desc: Install pre-commit into local git checkout
+    run: once
+    status:
+      - grep -q 'pre-commit\.com' .git/hooks/*
+    cmds:
+      - uv run pre-commit install
+
+  dev:lint:uv-lock:
+    aliases:
+      - check-lock
+    desc: Tests if uv lock is up-to-date
+    sources:
+      - pyproject.toml
+      - uv.lock
+    preconditions:
+      - sh: type "uv" &>/dev/null
+        msg: Please install uv, see https://docs.astral.sh/uv/getting-started/installation/
+    cmds:
+      - |
+        uv lock --locked 2>/dev/null || {
+          echo -e '\033[0;31mThe lockfile at `uv.lock` needs to be updated. To update the lockfile, run `task lock`\033[0m'.
+          exit 1
+        } >&2
+
+  dev:lint:code:
+    sources:
+      - pyproject.toml
+      - '*.py'
+    cmds:
+      - uv run ruff format --check
+      - uv run ruff check
+      - uv run pyright
+
+  dev:lint:renovate:
+    sources:
+      - .github/renovate.json
+    deps:
+      - dev:install-precommit
+    cmds:
+      - pre-commit run --files .github/renovate.json renovate-config-validator
+
+  dev:lint:
+    aliases:
+      - lint
+    desc: Runs linters
+    deps:
+      - dev:lint:uv-lock
+      - dev:lint:code
+      - dev:lint:renovate
+
+  dev:format:code:
+    desc: Formats main project
+    sources:
+      - pyproject.toml
+      - '*.py'
+    cmds:
+      - uv run ruff format
+
+  dev:format:
+    aliases:
+      - format
+    desc: Runs formatters
+    deps:
+      - dev:format:code
+
+  dev:uv-lock:
+    aliases:
+      - lock
+    desc: Updates uv lockfile
+    preconditions:
+      - sh: type "uv" &>/dev/null
+        msg: Please install uv, see https://docs.astral.sh/uv/getting-started/installation/
+    sources:
+      - pyproject.toml
+    generates:
+      - uv.lock
+    cmds:
+      - uv lock
+  
+  dev:test:
+    aliases:
+      - test
+    desc: Run the tests
+    cmds:
+      - uv run pytest {{.CLI_ARGS}}
+  
+  default:
+    deps:
+      - dev:format
+      - dev:lint
+      - dev:test
