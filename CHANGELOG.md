@@ -2,9 +2,10 @@
 
 ## 2.1 (unreleased)
 
-* Bumped minimal supported python version to 3.10
-* Added type annotations
 * Modernized the project development toolchain
+  * Bumped minimal supported python version to 3.10
+  * Converted the module to a package
+  * Added type annotations
 
 ## 2.0 (2020-02-03)
 
