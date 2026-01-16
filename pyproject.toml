@@ -8,7 +8,7 @@ license-files = [ "LICENSE.txt" ]
 authors = [
     { name = "Martijn Pieters", email = "mj@zopatista.com" }
 ]
-requires-python = ">=3.3"
+requires-python = ">=3.10"
 keywords = ["rtf"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -18,14 +18,45 @@ classifiers = [
 ]
 dependencies = []
 
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "pyright>=1.1.391",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.13",
+]
+
 [project.urls]
 Homepage = "https://github.com/mjpieters/rtfunicode"
 Repository = "https://github.com/mjpieters/rtfunicode"
 Issues = "https://github.com/mjpieters/rtfunicode/issues"
 Changelog = "https://github.com/mjpieters/rtfunicode/blob/main/CHANGELOG.md"
 
+[tool.coverage.run]
+include = ["rtfunicode.py"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
 [tool.hatch.build]
 include = ["rtfunicode.py"]
+
+[tool.pyright]
+strict = ["rtfunicode.py"]
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests.py"]
+addopts = "--cov --cov-report xml --cov-report term"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",
+    "UP"
+]
 
 [tool.hatch.build.targets.sdist]
 include = [

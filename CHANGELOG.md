@@ -1,5 +1,11 @@
 # Changelog for rtfunicode
 
+## 2.1 (unreleased)
+
+* Bumped minimal supported python version to 3.10
+* Added type annotations
+* Modernized the project development toolchain
+
 ## 2.0 (2020-02-03)
 
 * Removed Python 2 compatibility.
