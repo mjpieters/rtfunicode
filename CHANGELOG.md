@@ -1,6 +1,6 @@
 # Changelog for rtfunicode
 
-## 2.1 (unreleased)
+## 2.1 (2026-01-16)
 
 * Modernized the project development toolchain
   * Bumped minimal supported python version to 3.10
