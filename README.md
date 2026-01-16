@@ -1,5 +1,14 @@
 # Unicode to RTF command code conversion
 
+[![PyPI version](https://img.shields.io/pypi/v/rtfunicode.svg)](https://pypi.python.org/project/rtfunicode)
+[![License](https://img.shields.io/pypi/l/rtfunicode.svg)](https://github.com/mjpieters/rtfunicode/blob/main/LICENSE.txt)
+![Python versions supported](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fmjpieters%2Frtfunicode%2Fmain%2Fpyproject.toml)
+[![Built with uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Checked with Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with Pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Python checks](https://github.com/mjpieters/rtfunicode/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/mjpieters/rtfunicode/actions/workflows/ci-cd.yml)
+[![Coverage](https://codecov.io/gh/mjpieters/rtfunicode/graph/badge.svg?token=ZRZO4XRBP6)](https://codecov.io/gh/mjpieters/rtfunicode)
+
 This module implements an encoder for unicode to RTF 1.5 command sequences; it
 can be used to generate valid RTF output with international characters.
 
