@@ -5,7 +5,6 @@
 import codecs
 import re
 from struct import unpack
-from typing import Optional
 
 # Encode everything < 0x20, the \, { and } chars and everything > 0x7f.
 # Codeponts over \uffff are handled separately so capture these in a second
@@ -51,7 +50,7 @@ class StreamWriter(Codec, codecs.StreamWriter):
     pass
 
 
-def rtfunicode(name: str) -> Optional[codecs.CodecInfo]:
+def rtfunicode(name: str) -> codecs.CodecInfo | None:
     if name == "rtfunicode":
         return codecs.CodecInfo(
             name="rtfunicode",

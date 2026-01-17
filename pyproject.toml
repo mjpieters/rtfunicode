@@ -8,7 +8,7 @@ license-files = [ "LICENSE.txt" ]
 authors = [
     { name = "Martijn Pieters", email = "mj@zopatista.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["rtf"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -20,11 +20,9 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.5.1;python_version>='3.10'",
-    "pre-commit>=4.3.0;python_version~='3.9'",
+    "pre-commit>=4.5.1",
     "pyright>=1.1.391",
-    "pytest>=9.0.2;python_version>='3.10'",
-    "pytest>=8.4.2;python_version~='3.9'",
+    "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
     "ruff>=0.14.13",
 ]

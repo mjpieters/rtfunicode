@@ -1,5 +1,9 @@
 # Changelog for rtfunicode
 
+## 2.3 (unreleased)
+
+* Drop support for Python 3.9 again.
+
 ## 2.2 (2026-01-17)
 
 * Lower the minimum supported python version to 3.9, temporarily, for an
