@@ -1,5 +1,10 @@
 # Changelog for rtfunicode
 
+## 2.2 (unreleased)
+
+* Lower the minimum supported python version to 3.9, temporarily, for an
+  upstream project.
+
 ## 2.1 (2026-01-16)
 
 * Modernized the project development toolchain
