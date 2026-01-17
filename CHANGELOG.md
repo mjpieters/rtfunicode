@@ -1,6 +1,6 @@
 # Changelog for rtfunicode
 
-## 2.3 (unreleased)
+## 2.3 (2026-01-17)
 
 * Drop support for Python 3.9 again.
 

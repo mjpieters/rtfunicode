@@ -1,6 +1,6 @@
 [project]
 name = "rtfunicode"
-version = "2.2"
+version = "2.3"
 description = "Encoder for unicode to RTF 1.5 command sequences"
 readme = "README.md"
 license = "BSD-2-Clause"
