@@ -26,8 +26,7 @@
     {
       "description": "These packages are not abandoned just yet",
       "matchPackageNames": [
-        "aio-libs/get-releasenote",
-        "re-actors/alls-green"
+        "aio-libs/get-releasenote"
       ],
       "abandonmentThreshold": "5 years"
     }
