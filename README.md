@@ -17,7 +17,7 @@ unicode strings to valid RTF bytecode sequences:
 
 ```pycon
 >>> import rtfunicode
->>> 'RTF and unicode mix just fine! \u263A'.encode('rtfunicode')
+>>> "RTF and unicode mix just fine! \u263a".encode("rtfunicode")
 'RTF and unicode mix just fine! \\u9786?'
 ```
 

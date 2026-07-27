@@ -4,7 +4,7 @@ import unittest
 
 class RTFUnicodeTests(unittest.TestCase):
     def setUp(self):
-        import rtfunicode as rtfunicode  # auto-registers
+        import rtfunicode  # auto-registers  # noqa: F401
 
     def _compare(self, in_, out):
         self.assertEqual(in_.encode("rtfunicode"), out)
