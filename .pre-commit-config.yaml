@@ -3,31 +3,66 @@ default_install_hook_types:
   - post-checkout
   - post-merge
   - post-rewrite
+priorities:
+  # note: formatters can't run in parallel
+  setup: 0
+  format-eof: 10
+  format-trailing-whitespace: 11
+  format-insert-license: 12
+  format-ruff: 13
+  checks: 20
+
 repos:
-- repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.9.25
-  hooks:
-    - id: uv-lock
-    - id: uv-sync
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.0
-  hooks:
-    - id: ruff-format
-      types_or: [python, pyi, jupyter, markdown]
-    - id: ruff
-- repo: https://github.com/RobertCraigie/pyright-python
-  rev: v1.1.408
-  hooks:
-  - id: pyright
-- repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 42.81.11
-  hooks:
-  - id: renovate-config-validator
-- repo: https://github.com/zizmorcore/zizmor-pre-commit
-  rev: v1.20.0
-  hooks:
-  - id: zizmor
-- repo: https://github.com/rhysd/actionlint
-  rev: v1.7.11
-  hooks:
-  - id: actionlint
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.25
+    hooks:
+      - id: uv-lock
+        priority: setup
+      - id: uv-sync
+        priority: setup
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.0
+    hooks:
+      - id: ruff-format
+        types_or: [python, pyi, jupyter, markdown]
+        priority: format-ruff
+      - id: ruff-check
+        priority: checks
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.408
+    hooks:
+    - id: pyright
+      args: [--pythonpath, .venv/bin/python]
+      language_version: ">=3.10"
+      priority: checks
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 42.81.11
+    hooks:
+      - id: renovate-config-validator
+        priority: checks
+  - repo: builtin
+    hooks:
+      - id: check-symlinks
+        priority: checks
+        groups: [ci]
+      - id: check-yaml
+        priority: checks
+        groups: [ci]
+      - id: end-of-file-fixer
+        priority: format-eof
+        groups: [ci]
+      - id: trailing-whitespace
+        priority: format-trailing-whitespace
+        groups: [ci]
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.20.0
+    hooks:
+      - id: zizmor
+        priority: checks
+        groups: [ci]
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
+        priority: checks
+        groups: [ci]
